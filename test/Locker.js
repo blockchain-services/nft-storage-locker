@@ -82,4 +82,26 @@ describe("Locker", function () {
     expect(await erc1155.balanceOf(locker.address, 2)).to.equal(1);
   });
 
+  it('Should store a token in the locker and allow other for unlock with the right key', async function () {
+    //set the approval on the token
+    await erc1155.setApprovalForAll(locker.address, true);
+    await locker.dropOff(
+      erc1155.address,
+      1,
+      erc1155.address,
+      2,
+      1
+    );
+
+    // check the balances - sender should have 0 balance 
+    expect(await erc1155.balanceOf(sender.address, 2)).to.equal(0);
+    // locker should have 1 balance of the token being stored
+    expect(await erc1155.balanceOf(locker.address, 2)).to.equal(1);
+
+    // mint 5 balance to receiver so they'll be able to unlock locker
+    await erc1155.mint(receiver.address, 1, 5, []);
+    await locker.connect(receiver).pickUpTokenWithKey(1)
+    // check the balances - receiver should now have 1 balance
+    expect(await erc1155.balanceOf(receiver.address, 2)).to.equal(1);
+  })
 });
