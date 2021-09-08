@@ -230,7 +230,7 @@ contract Locker is ILocker, ERC1155Holder, ERC721Holder, Ownable {
         // require unlock token hash matches
         require(
             _contents.unlockTokenHash == unlockTokenHashKey,
-            "No token to pick up"
+            "Unlock Token hash missmatched"
         );
 
         // require there be a quantity to pick up
